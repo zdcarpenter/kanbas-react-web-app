@@ -129,6 +129,7 @@ export default function AssignmentEditor() {
                 <tr>
                     <td colSpan={3} align="right">
                         <button>Cancel</button> <button>Save</button>
+                        
                     </td>
                 </tr>
             </table>
