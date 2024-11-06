@@ -78,7 +78,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
                         <button className="btn btn-danger float-end"
                           onClick={(event) => {
                             event.preventDefault();
-                            dispatch(deleteEnrollment({ course: course.id, user: currentUser.id }));
+                            dispatch(deleteEnrollment({ course: course._id, user: currentUser._id }));
                             console.log(enrollments);
                           }}>
                           Unenroll</button>}
@@ -89,7 +89,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
                         <button className="btn btn-success float-end"
                           onClick={(event) => {
                             event.preventDefault();
-                            dispatch(addEnrollment({ course: course.id, user: currentUser.id }));
+                            dispatch(addEnrollment({ course: course._id, user: currentUser._id }));
                             console.log(enrollments);
                           }}>
                           Enroll
