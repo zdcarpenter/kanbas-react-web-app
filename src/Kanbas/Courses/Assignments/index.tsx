@@ -4,11 +4,15 @@ import AssignmentTitleControls from './AssignmentTitleControls';
 import LessonControlButtons from '../Modules/LessonControlButtons';
 import { FaPenSquare } from 'react-icons/fa';
 import { useParams } from "react-router";
-import * as db from "../../Database";
+import { useDispatch, useSelector } from 'react-redux';
+import { FaTrash } from "react-icons/fa";
+import { deleteAssignment } from './reducer';
 
 export default function Assignments() {
     const { cid } = useParams();
-    const assignments = db.assignments;
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const { assignments } = useSelector((state: any) => state.assignmentReducer);
+    const dispatch = useDispatch();
     return (
         <div id="wd-assignments">
             <AssignmentControls />
@@ -25,10 +29,17 @@ export default function Assignments() {
                             <li className="wd-assignment-list-item list-group-item p-1 fs-5 border-gray d-flex justify-content-between">
                                 <div className="col-1 d-flex align-items-center">
                                     <BsGripVertical className="me-2 fs-3" />
-                                    <a className="wd-assignment-link text-success"
-                                        href={"#/Kanbas/Courses/" + cid + "/Assignments/" + assignment._id}>
-                                        <FaPenSquare className="fs-3" />
-                                    </a>
+                                    {currentUser.role === "FACULTY" &&
+                                        <a className="wd-assignment-link text-success"
+                                            href={"#/Kanbas/Courses/" + cid + "/Assignments/" + assignment._id}>
+                                            <FaPenSquare className="fs-3" />
+                                        </a>}
+                                    {currentUser.role === "FACULTY" &&
+                                        <button className="btn" onClick={()=> {if (window.confirm('Are you sure you want to delete this assignment?')) {
+                                            dispatch(deleteAssignment(assignment._id)); 
+                                        }}}>
+                                            <FaTrash className='text-danger me-2 mb-1 fs-4' />
+                                        </button>}
                                 </div>
                                 <div className="col-7">
                                     <a className="wd-assignment-link text-decoration-none text-dark"

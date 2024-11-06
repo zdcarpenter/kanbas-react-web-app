@@ -1,5 +1,10 @@
 import { FaSearch, FaPlus} from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
 export default function AssignmentControls() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { assignments } = useSelector((state: any) => state.assignmentReducer);
+  const { pathname } = useLocation();
   return (
     <div className="d-flex align-items-center justify-content-start pb-1 mb-3 text-nowrap">
       <div className="input-group me-5">
@@ -13,16 +18,17 @@ export default function AssignmentControls() {
           placeholder="Search for assignments"
         />
       </div>
+      {currentUser.role === "FACULTY" && 
       <div className="d-flex  mb-3">
         <button id="wd-add-assignment-group" className="btn btn-secondary float-end">
           <FaPlus className="me-1" /> 
           <span>Group</span>
         </button>
-        <button id="wd-add-assignment" className="btn btn-danger float-end">
+        <Link to={pathname + "/" + "ANEW"} id="wd-add-assignment" className="btn btn-danger float-end">
           <FaPlus className="me-1" /> 
           <span>Assignment</span>
-        </button>
-      </div>
+        </Link>
+      </div>}
     </div>
   )
 }
