@@ -6,13 +6,26 @@ import { FaPenSquare } from 'react-icons/fa';
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from 'react-redux';
 import { FaTrash } from "react-icons/fa";
-import { deleteAssignment } from './reducer';
-
+import { deleteAssignment, setAssignments } from './reducer';
+import * as client from "./client";
+import * as coursesClient from "../client";
+import { useEffect } from 'react';
 export default function Assignments() {
     const { cid } = useParams();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { assignments } = useSelector((state: any) => state.assignmentReducer);
     const dispatch = useDispatch();
+    const fetchAssignments = async () => {
+        const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(assignments));
+    };
+    useEffect(() => {
+        fetchAssignments();
+    }, []);
+    const removeAssignment = async (assignmentId: string) => {
+        await client.deleteAssignment(assignmentId);
+        dispatch(deleteAssignment(assignmentId));
+    }
     return (
         <div id="wd-assignments">
             <AssignmentControls />
@@ -23,7 +36,6 @@ export default function Assignments() {
             </div>
             <ul className="wd-assignment-list list-group rounded-0" style={{ borderLeft: '4px solid green' }}>
                 {assignments
-                    .filter((assignment: any) => assignment.course === cid)
                     .map((assignment: any) => (
                         <div>
                             <li className="wd-assignment-list-item list-group-item p-1 fs-5 border-gray d-flex justify-content-between">
@@ -36,7 +48,7 @@ export default function Assignments() {
                                         </a>}
                                     {currentUser.role === "FACULTY" &&
                                         <button className="btn" onClick={()=> {if (window.confirm('Are you sure you want to delete this assignment?')) {
-                                            dispatch(deleteAssignment(assignment._id)); 
+                                            removeAssignment(assignment._id);
                                         }}}>
                                             <FaTrash className='text-danger me-2 mb-1 fs-4' />
                                         </button>}

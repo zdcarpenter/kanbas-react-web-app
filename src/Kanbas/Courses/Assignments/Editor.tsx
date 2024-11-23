@@ -1,12 +1,15 @@
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { updateAssignment, addAssignment } from "./reducer";
+import { updateAssignment, addAssignment, setAssignments } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import * as client from "./client";
+import * as coursesClient from "../client";
 export default function AssignmentEditor() {
     const { aid, cid } = useParams();
     const isNew = aid === "ANEW";
     const { assignments } = useSelector((state: any) => state.assignmentReducer);
+    const dispatch = useDispatch();
     const maybeAssignment = assignments.find((a: any) => a._id === aid);
     const [assignment, setAssignment] = useState(
         {
@@ -20,8 +23,14 @@ export default function AssignmentEditor() {
             due_time: maybeAssignment?.due_time || "",
             avail_time: maybeAssignment?.avail_time || "",
         });
-    const dispatch = useDispatch();
-
+    const saveAssignment = async () => {
+        await client.updateAssignment(assignment);
+        dispatch(updateAssignment(assignment));
+    };
+    const createAssignment = async () => {
+        await client.createAssignment(assignment);
+        dispatch(addAssignment(assignment));
+    };
     return (
         <div id="wd-assignments-editor d-flex ms-2">
             <h3 className="fs-6">
@@ -134,7 +143,7 @@ export default function AssignmentEditor() {
             </div>
             <div className="text-end">
                 <Link to={"/Kanbas/Courses/" + cid + "/Assignments"}><button className="btn btn-secondary">Cancel</button></Link>
-                <Link to={"/Kanbas/Courses/" + cid + "/Assignments"}> <button className="btn btn-danger" onClick={() => isNew ? dispatch(addAssignment(assignment)) : dispatch(updateAssignment(assignment))}>Save</button></Link>
+                <Link to={"/Kanbas/Courses/" + cid + "/Assignments"}> <button className="btn btn-danger" onClick={() => isNew ? createAssignment : saveAssignment}>Save</button></Link>
             </div>
         </div>
     );

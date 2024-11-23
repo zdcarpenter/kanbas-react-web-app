@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addEnrollment, deleteEnrollment } from "./reducer";
-
+import { addEnrollment, deleteEnrollment, setEnrollments } from "./reducer";
+import * as coursesClient from "../Courses/client";
+import * as client from "./client";
 export default function Dashboard({ courses, course, setCourse, addNewCourse,
   deleteCourse, updateCourse }: {
     courses: any[]; course: any; setCourse: (course: any) => void;
@@ -12,7 +13,30 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { enrollments } = useSelector((state: any) => state.enrollmentReducer);
   const [displayAll, setDisplayAll] = useState(false);
+  const [allCourses, setAllCourses] = useState<any[]>([]);
   const dispatch = useDispatch();
+  const fetchEnrollments = async () => {
+    const enrollments = await client.findEnrollments();
+    dispatch(setEnrollments(enrollments));
+  };
+  useEffect(() => {
+    fetchEnrollments();
+  }, []);
+  const fetchAllCourses = async () => {
+    const courses = await coursesClient.fetchAllCourses();
+    setAllCourses(courses);
+  };
+  useEffect(() => {
+    fetchAllCourses();
+  }, []);
+  const unenroll = async (userId: string, courseId: string) => {
+    await client.deleteEnrollment(userId, courseId);
+    dispatch(deleteEnrollment({ user: userId, course: courseId }));
+  };
+  const enroll = async (userId: string, courseId: string) => {
+    await client.addEnrollment(userId, courseId);
+    dispatch(addEnrollment({ user: userId, course: courseId }));
+  };
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
@@ -36,14 +60,8 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
       <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
-          {courses.filter((course) =>
-            displayAll ? true :
-              enrollments.some(
-                (enrollment: { user: any; course: any; }) =>
-                  enrollment.user === currentUser._id &&
-                  enrollment.course === course._id
-              ))
-            .map((course) => (
+          {(displayAll ? allCourses : courses)
+          .map((course) => (
               <div className="wd-dashboard-course col" style={{ width: "300px" }}>
                 <div className="card rounded-3 overflow-hidden">
                   <Link to={`/Kanbas/Courses/${course._id}/Home`}
@@ -78,8 +96,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
                         <button className="btn btn-danger float-end"
                           onClick={(event) => {
                             event.preventDefault();
-                            dispatch(deleteEnrollment({ course: course._id, user: currentUser._id }));
-                            console.log(enrollments);
+                            unenroll(currentUser._id, course._id);
                           }}>
                           Unenroll</button>}
                       {currentUser.role === "STUDENT" && !enrollments.some(
@@ -89,8 +106,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
                         <button className="btn btn-success float-end"
                           onClick={(event) => {
                             event.preventDefault();
-                            dispatch(addEnrollment({ course: course._id, user: currentUser._id }));
-                            console.log(enrollments);
+                            enroll(currentUser._id, course._id);
                           }}>
                           Enroll
                         </button>}
