@@ -1,15 +1,15 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { FaPlus, FaEdit, FaTrash, FaPencilAlt } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {ChangeEvent, useEffect, useState} from "react";
+import {FaPencilAlt, FaPlus, FaTrash} from "react-icons/fa";
+import {useDispatch, useSelector} from "react-redux";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import * as questionClient from "./client";
-import { setQuestions, addQuestion, deleteQuestion, updateQuestion } from "./reducer";
+import {addQuestion, deleteQuestion, setQuestions, updateQuestion} from "./reducer";
 
 export default function QuestionEditor() {
-    const { cid, qid } = useParams();
+    const {cid, qid} = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { questions } = useSelector((state: any) => state.questionReducer);
+    const {questions} = useSelector((state: any) => state.questionReducer);
     const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
     const [editingQuestion, setEditingQuestion] = useState<any>(null);
     const [originalQuestion, setOriginalQuestion] = useState<any>(null);
@@ -29,18 +29,18 @@ export default function QuestionEditor() {
         dispatch(addQuestion(questionData));
         const newQuestionId = new Date().getTime().toString();
         setEditingQuestionId(newQuestionId);
-        setEditingQuestion({ _id: newQuestionId, ...questionData });
-        setOriginalQuestion({ _id: newQuestionId, ...questionData });
+        setEditingQuestion({_id: newQuestionId, ...questionData});
+        setOriginalQuestion({_id: newQuestionId, ...questionData});
         // await questionClient.createQuestion(qid as string, questionData);
         // Add new question to the list
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
+        const {name, value, type} = e.target;
         const checked = (e.target as HTMLInputElement).checked;
         setEditingQuestion((prev: any) => {
             if (prev) {
-                const updatedQuestion = { ...prev, [name]: type === "checkbox" ? checked : value };
+                const updatedQuestion = {...prev, [name]: type === "checkbox" ? checked : value};
                 dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
                 return updatedQuestion;
             }
@@ -52,7 +52,7 @@ export default function QuestionEditor() {
         if (editingQuestion) {
             const newChoices = [...editingQuestion.choices];
             newChoices[index] = e.target.value;
-            const updatedQuestion = { ...editingQuestion, choices: newChoices };
+            const updatedQuestion = {...editingQuestion, choices: newChoices};
             setEditingQuestion(updatedQuestion);
             dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
         }
@@ -60,7 +60,7 @@ export default function QuestionEditor() {
 
     const handleRadioChange = (e: ChangeEvent<HTMLInputElement>, choice: string) => {
         if (editingQuestion) {
-            const updatedQuestion = { ...editingQuestion, answer: choice };
+            const updatedQuestion = {...editingQuestion, answer: choice};
             setEditingQuestion(updatedQuestion);
             dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
         }
@@ -69,7 +69,7 @@ export default function QuestionEditor() {
     const handleDeleteChoice = (choiceIndex: number) => {
         if (editingQuestion) {
             const newChoices = editingQuestion.choices.filter((_: any, index: any) => index !== choiceIndex);
-            const updatedQuestion = { ...editingQuestion, choices: newChoices };
+            const updatedQuestion = {...editingQuestion, choices: newChoices};
             setEditingQuestion(updatedQuestion);
             dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
         }
@@ -79,7 +79,7 @@ export default function QuestionEditor() {
     const handleAddChoice = () => {
         if (editingQuestion) {
             const newChoices = [...editingQuestion.choices, ""];
-            const updatedQuestion = { ...editingQuestion, choices: newChoices };
+            const updatedQuestion = {...editingQuestion, choices: newChoices};
             setEditingQuestion(updatedQuestion);
             dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
         }
@@ -100,7 +100,7 @@ export default function QuestionEditor() {
 
         questions.map(async (question: any) => {
             if (!existingQuestions.find((q: any) => q._id === question._id)) {
-                const questionToSave = { ...question };
+                const questionToSave = {...question};
                 delete questionToSave._id;
                 await questionClient.createQuestion(qid as string, questionToSave);
             } else {
@@ -124,13 +124,15 @@ export default function QuestionEditor() {
                             {question.title}
                             <div className="fs-5">
                                 <FaPencilAlt className="text-primary me-2"
-                                    onClick={() => {
-                                        setEditingQuestionId(editingQuestionId === question._id ? null : question._id);
-                                        setEditingQuestion(question);
-                                        setOriginalQuestion(question);
-                                    }} />
+                                             onClick={() => {
+                                                 setEditingQuestionId(editingQuestionId === question._id ? null : question._id);
+                                                 setEditingQuestion(question);
+                                                 setOriginalQuestion(question);
+                                             }}/>
                                 <FaTrash className="text-danger"
-                                    onClick={() => { dispatch(deleteQuestion(question._id)) }} />
+                                         onClick={() => {
+                                             dispatch(deleteQuestion(question._id))
+                                         }}/>
                             </div>
                         </div>
                         {editingQuestionId === question._id && (
@@ -148,7 +150,8 @@ export default function QuestionEditor() {
                                 </div>
                                 <div className="form-group mb-3 d-flex justify-content-between">
                                     <div className="w-50">
-                                        <label className="form-label" htmlFor="question-type"><b>Question Type</b></label>
+                                        <label className="form-label" htmlFor="question-type"><b>Question
+                                            Type</b></label>
                                         <select
                                             className="form-control"
                                             id="question-type"
@@ -174,7 +177,8 @@ export default function QuestionEditor() {
                                     </div>
                                 </div>
                                 <div className="form-group mb-3">
-                                    <label className="form-label" htmlFor="question-instructions"><b>Question</b></label>
+                                    <label className="form-label"
+                                           htmlFor="question-instructions"><b>Question</b></label>
                                     <textarea
                                         className="form-control"
                                         id="question-instructions"
@@ -208,7 +212,7 @@ export default function QuestionEditor() {
                                                 className="btn btn-danger"
                                                 onClick={() => handleDeleteChoice(index)}
                                             >
-                                                <FaTrash />
+                                                <FaTrash/>
                                             </button>
                                         </div>
                                     ))}
@@ -257,37 +261,40 @@ export default function QuestionEditor() {
                                                 className="btn btn-danger"
                                                 onClick={() => handleDeleteChoice(index)}
                                             >
-                                                <FaTrash />
+                                                <FaTrash/>
                                             </button>
                                         </div>
                                     ))}
                                     {(question?.type === "Multiple Choice" || question?.type === "Fill-in-the-Blank") && (
-                                        <a onClick={() => { handleAddChoice() }}
-                                            className="float-end text-danger text-decoration-none d-flex align-items-center"
-                                            style={{ cursor: "pointer" }}>
-                                            <FaPlus className="me-2" />
+                                        <a onClick={() => {
+                                            handleAddChoice()
+                                        }}
+                                           className="float-end text-danger text-decoration-none d-flex align-items-center"
+                                           style={{cursor: "pointer"}}>
+                                            <FaPlus className="me-2"/>
                                             Add Another Answer
                                         </a>
                                     )}
                                 </div>
-                                <br /><hr />
+                                <br/>
+                                <hr/>
                                 <div className="d-flex justify-content-start">
                                     <button type="button" className="btn btn-light border texxt-secondary me-2"
-                                        onClick={() => {
-                                            dispatch(updateQuestion(originalQuestion));
-                                            setEditingQuestionId(null);
-                                        }}>
+                                            onClick={() => {
+                                                dispatch(updateQuestion(originalQuestion));
+                                                setEditingQuestionId(null);
+                                            }}>
                                         Cancel
                                     </button>
                                     <button type="button" className="btn btn-danger"
-                                        onClick={() => {
-                                            if (editingQuestion.type === "True/False") {
-                                                const newChoices = ["True", "False"];
-                                                const updatedQuestion = { ...editingQuestion, choices: newChoices };
-                                                dispatch(updateQuestion(updatedQuestion));
-                                            }
-                                            setEditingQuestionId(null);
-                                        }}>
+                                            onClick={() => {
+                                                if (editingQuestion.type === "True/False") {
+                                                    const newChoices = ["True", "False"];
+                                                    const updatedQuestion = {...editingQuestion, choices: newChoices};
+                                                    dispatch(updateQuestion(updatedQuestion));
+                                                }
+                                                setEditingQuestionId(null);
+                                            }}>
                                         Update Question
                                     </button>
                                 </div>
@@ -298,18 +305,18 @@ export default function QuestionEditor() {
             </ul>
             <div className="text-center mt-3">
                 <button className="btn btn-lg btn-secondary" onClick={handleAddQuestion}>
-                    <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+                    <FaPlus className="position-relative me-2" style={{bottom: "1px"}}/>
                     New Question
                 </button>
             </div>
             {/* Save and Cancel buttons */}
-            <hr />
+            <hr/>
             <div className="d-flex float-end">
                 <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
                     <button className="btn btn-light border text-secondary mx-1">Cancel</button>
                 </Link>
                 <button type="button" className="btn btn-danger border border-dark mx-1"
-                    onClick={handleSave}>
+                        onClick={handleSave}>
                     Save
                 </button>
             </div>

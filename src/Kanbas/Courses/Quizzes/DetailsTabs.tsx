@@ -1,17 +1,16 @@
-import { useState } from "react";
+import {useState} from "react";
 import DetailsEditor from "./DetailsEditor";
 import QuestionEditor from "./Questions/QuestionEditor";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
 export default function DetailsTabs() {
-    const { questions } = useSelector((state: any) => state.questionReducer);
+    const {questions} = useSelector((state: any) => state.questionReducer);
     const [activeTab, setActiveTab] = useState("details");
 
-    // Calculate total points
     const totalPoints = () => {
         let total = 0;
-        questions.forEach((question : any) => {
-            total += Number(question.points) || 0; // Ensure points is parsed as a number
+        questions.forEach((question: any) => {
+            total += Number(question.points) || 0; // ensure it's a number
         });
         return total;
     };
@@ -19,7 +18,7 @@ export default function DetailsTabs() {
     return (
         <div id="wd-details-tabs" className=" w-100 ms-2">
             <h4 className="text-end">Points: {totalPoints()}</h4>
-            <hr />
+            <hr/>
             <ul className="nav nav-tabs mb-2">
                 <li className="nav-item">
                     <a
@@ -43,8 +42,8 @@ export default function DetailsTabs() {
                 </li>
             </ul>
             <div className="tab-content">
-                {activeTab === "details" && <DetailsEditor />}
-                {activeTab === "questions" && <QuestionEditor />}
+                {activeTab === "details" && <DetailsEditor/>}
+                {activeTab === "questions" && <QuestionEditor/>}
             </div>
         </div>
     );

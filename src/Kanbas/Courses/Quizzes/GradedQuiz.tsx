@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router";
 import * as quizClient from "./client";
 import "./QuizView.css";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
 export default function GradedQuiz() {
-    const { qid, cid } = useParams();
+    const {qid, cid} = useParams();
     const [questions, setQuestions] = useState<any[]>([]);
     const [quiz, setQuiz] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
     const [answers, setAnswers] = useState<{ [key: string]: any }>({});
     const [answer, setAnswer] = useState<any>(null);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const {currentUser} = useSelector((state: any) => state.accountReducer);
 
     const navigate = useNavigate();
     const handleSubmitQuiz = async () => {
@@ -75,7 +75,7 @@ export default function GradedQuiz() {
     }
 
     if (!quiz) {
-        return <div>Quiz not found</div>;
+        return <div>Quiz not found!</div>;
     }
 
     const renderQuestion = (question: any, index: number) => {
@@ -87,10 +87,12 @@ export default function GradedQuiz() {
             <div key={question._id} className="question-card">
                 <div className="question-header">
                     <div className="question-title">Question {index + 1}</div>
-                    <div className="question-points">{(question.type === "Fill-in-the-Blank" ? question.choices.includes(answers[question._id]) :
-                    answers[question._id] === question.answer) ? 
-                    `${question.points} / ${question.points}` : 
-                    `0 / ${question.points}`} pts</div>
+                    <div
+                        className="question-points">{(question.type === "Fill-in-the-Blank" ? question.choices.includes(answers[question._id]) :
+                        answers[question._id] === question.answer) ?
+                        `${question.points} / ${question.points}` :
+                        `0 / ${question.points}`} pts
+                    </div>
                 </div>
                 <p className="question-text">
                     {question.question || "No question text available"}
@@ -116,11 +118,11 @@ export default function GradedQuiz() {
                                             />
                                             <label htmlFor={`option-${index}`}>{choice}</label>
                                             {question.answer === choice && (
-                                            <>
-                                                <span className="correct-arrow" style={{ color: 'green' }}>✔</span>
-                                                <span className="correct-answer" style={{ color: 'green' }}>Correct Answer</span>
-                                            </>
-                                        )}
+                                                <>
+                                                    <span className="correct-arrow" style={{color: 'green'}}>✔</span>
+                                                    <span className="correct-answer" style={{color: 'green'}}>Correct Answer</span>
+                                                </>
+                                            )}
                                         </li>
                                     ))}
                                 </ul>
@@ -140,8 +142,9 @@ export default function GradedQuiz() {
                                         True
                                         {question.answer === "True" && (
                                             <>
-                                                <span className="correct-arrow" style={{ color: 'green' }}>✔</span>
-                                                <span className="correct-answer" style={{ color: 'green' }}>Correct Answer</span>
+                                                <span className="correct-arrow" style={{color: 'green'}}>✔</span>
+                                                <span className="correct-answer"
+                                                      style={{color: 'green'}}>Correct Answer</span>
                                             </>
                                         )}
                                     </li>
@@ -157,8 +160,9 @@ export default function GradedQuiz() {
                                         False
                                         {question.answer === "False" && (
                                             <>
-                                                <span className="correct-arrow" style={{ color: 'green' }}>✔</span>
-                                                <span className="correct-answer" style={{ color: 'green' }}>Correct Answer</span>
+                                                <span className="correct-arrow" style={{color: 'green'}}>✔</span>
+                                                <span className="correct-answer"
+                                                      style={{color: 'green'}}>Correct Answer</span>
                                             </>
                                         )}
                                     </li>
@@ -176,9 +180,10 @@ export default function GradedQuiz() {
                                         disabled
                                     />
                                     <div className="correct-answer-box">
-                                        <span className="correct-answer-label" style={{ color: 'green' }}>Correct Answers: </span>
+                                        <span className="correct-answer-label"
+                                              style={{color: 'green'}}>Correct Answers: </span>
                                         {question.choices.map((choice: string, index: number) => (
-                                            <div key={index} className="correct-answer-text" style={{ color: 'green' }}>
+                                            <div key={index} className="correct-answer-text" style={{color: 'green'}}>
                                                 {choice}
                                             </div>
                                         ))}
@@ -200,7 +205,7 @@ export default function GradedQuiz() {
             <h1 className="quiz-title">{quiz.name}</h1>
             <p className="quiz-instructions">{quiz.instructions}</p>
             <h3>Grade: {answer && answer.score}/{quiz.points}</h3>
-            <hr className="quiz-divider" />
+            <hr className="quiz-divider"/>
 
             {quiz.one_at_a_time ? (
                 <div>
